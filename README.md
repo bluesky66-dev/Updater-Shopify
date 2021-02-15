@@ -29,10 +29,24 @@ var destinationURL = "getha-thailand"
 ## importBlogs.js
 Using [Axios](https://github.com/axios/axios), this script first sends a GET request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json](https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json) (hardcoded into the URL parameter for now), and console logs the result.
 
-After retreving all the articles, importArticles.js can be used to send a POST request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json](https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json). A successful POST request will respond with 
+After retreving all the articles, importArticles.js can be used to send a POST request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json](https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json). A successful POST request will respond with status code = 201 and console.log the following:
 >Imported Successfully!
-and respond with the blog sent in JSON. 
 
+and respond with the blog sent in JSON. 
+```javascript
+{
+  blog: {
+    id: 76612534453,
+    handle: 'news-11',
+    title: 'News',
+    updated_at: '2021-02-15T04:45:09-05:00',
+    feedburner_location: null,
+    created_at: '2021-02-15T04:45:09-05:00',
+    template_suffix: null,
+    admin_graphql_api_id: 'gid://shopify/OnlineStoreBlog/76612534453'
+  }
+}
+```
 This is done in a forloop for the length of the blog array.
 
 ## Future Improvements
