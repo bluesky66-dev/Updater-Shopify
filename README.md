@@ -13,10 +13,12 @@ $ npm start
 ## Prerequisites 
 This script requires a .env file on the root folder to retreive the API Key and API Secret as shown below:
 ```
-apiKey = 'YOUR API KEY'
-apiSecret = 'YOUR API SECRET'
+apiKey_source = 'YOUR SOURCE API KEY'
+apiSecret_source = 'YOUR SOURCE API SECRET'
+apiKey_dest = 'YOUR DESTINATION API KEY'
+apiSecret_dest = 'YOUR DESTINATION API SECRET'
 ```
-See [dotenv](https://www.npmjs.com/package/dotenv) for more info.
+See [dotenv](https://www.npmjs.com/package/dotenv) and [how to get API keys and secrets](https://duplicate-shopify-app.herokuapp.com/credentials) for more info.
 
 
 ```javascript
