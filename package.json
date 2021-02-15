@@ -1,0 +1,16 @@
+{
+  "name": "postman",
+  "version": "1.0.0",
+  "description": "Node function to import collections from a page",
+  "main": "test.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@shopify/themekit": "^1.1.7",
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0"
+  }
+}
