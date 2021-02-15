@@ -10,7 +10,7 @@ const {
     apiSecret_dest
 } = process.env;
 
-//Enter Source and Destination Store URLs
+//Enter Source and Destination Store URLs (EDIT ME)
 var sourceURL = "z21-store-cloner"
 var destinationURL = "getha-thailand"
 
