@@ -1,7 +1,5 @@
 var axios = require('axios');
 
-//sourceURL = "z21-store-cloner";
-//encoded = "Basic MTkzZmQ5OTdhZGU3ODJhNjA1OWI0OWJhZWFiZGU2Nzg6c2hwcGFfMjU2NGNjNWI1ZDI3YjU4MjcwNTdjN2RmZDk1Y2M3ZjA=";
 module.exports = function (sourceURL, encoded) {
     
 }
