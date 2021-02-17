@@ -2,7 +2,7 @@ var axios = require('axios');
 require('dotenv').config();
 
 const importBlogs = async (sourceURL,destinationURL,authSource,authDest) => {
-    console.log('===DUPLICATING BLOGS, this might take awhile===');
+    console.log('====DUPLICATING BLOGS====');
     try {
         const blogsSource = await getBlogs(sourceURL, authSource);
         const blogsDest = await getBlogs(destinationURL, authDest);

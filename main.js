@@ -1,7 +1,7 @@
 require('dotenv').config();
 var encodeKeys = require('./encodeKeys');
 var importBlogs = require('./importBlogs');
-
+var importPages = require('./importPages');
 // Retreives API keys from .env file
 const {
     apiKey_source,
@@ -11,7 +11,7 @@ const {
 } = process.env;
 
 //Enter Source and Destination Store URLs (EDIT ME)
-var sourceURL = "getha-online"
+var sourceURL = "getha-th-test"
 var destinationURL = "z21-store-cloner"
 
 
@@ -22,10 +22,12 @@ async function main(){
 
     //Tries to import the blogs, catches errors
     try {
-        await importBlogs(sourceURL,destinationURL,authSource,authDest).then(console.log);
-
+        const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
+        const pages = await importPages(sourceURL,destinationURL,authSource,authDest);
+        const output = [blogs,pages];
+        return output;
     } catch (err) {
         console.log(err);
     }
 }
-main()
+main().then(console.log)
