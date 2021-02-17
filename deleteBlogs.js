@@ -12,7 +12,7 @@ const {
 
 var authDest = encodeKeys(apiKey_dest, apiSecret_dest);
 
-function getBLogs(){
+function getBlogs(){
     var config = {
         method: 'get',
         url: `https://${destinationURL}.myshopify.com/admin/api/2021-01/blogs.json`,
@@ -48,4 +48,4 @@ async function deleteBlogs(){
         return data=='';
     }
 }
-getBLogs()
+getBlogs()

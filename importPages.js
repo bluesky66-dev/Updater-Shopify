@@ -2,7 +2,7 @@ var axios = require('axios');
 require('dotenv').config();
 
 const importPages = async (sourceURL, destinationURL, authSource, authDest) => {
-    console.log('====DUPLICATING Pages====');
+    console.log('====DUPLICATING PAGES====');
     try {
         const pagesSource = await getPages(sourceURL, authSource);
         const pagesDest = await getPages(destinationURL, authDest);
@@ -64,7 +64,7 @@ const postPages = async (storeURL, auth, pagesSource) => {
     const data = await axios(config)
         .then(response => response.data)
         .catch(errors => console.log(JSON.stringify(errors)));
-    sleep(1000);
+    await sleep(500);
     return data ? data : 'An error occured';
 }
 const getPages = async (storeURL, auth) => {

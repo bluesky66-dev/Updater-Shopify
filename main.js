@@ -2,6 +2,8 @@ require('dotenv').config();
 var encodeKeys = require('./encodeKeys');
 var importBlogs = require('./importBlogs');
 var importPages = require('./importPages');
+var importProducts = require('./importProducts');
+
 // Retreives API keys from .env file
 const {
     apiKey_source,
@@ -22,10 +24,10 @@ async function main(){
 
     //Tries to import the blogs, catches errors
     try {
-        const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
-        const pages = await importPages(sourceURL,destinationURL,authSource,authDest);
-        const output = [blogs,pages];
-        return output;
+        //const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
+        //const pages = await importPages(sourceURL,destinationURL,authSource,authDest);
+        const products = await importProducts(sourceURL,destinationURL,authSource,authDest);
+        return [products];
     } catch (err) {
         console.log(err);
     }
