@@ -4,7 +4,8 @@
   "description": "Node function to import collections from a page",
   "main": "test.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "delete": "node deleteBlogs.js"
   },
   "author": "",
   "license": "ISC",

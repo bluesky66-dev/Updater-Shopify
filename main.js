@@ -11,8 +11,8 @@ const {
 } = process.env;
 
 //Enter Source and Destination Store URLs (EDIT ME)
-var sourceURL = "z21-store-cloner"
-var destinationURL = "getha-thailand"
+var sourceURL = "getha-online"
+var destinationURL = "z21-store-cloner"
 
 
 async function main(){
@@ -22,7 +22,7 @@ async function main(){
 
     //Tries to import the blogs, catches errors
     try {
-        await importBlogs(sourceURL, destinationURL,authSource,authDest );
+        await importBlogs(sourceURL,destinationURL,authSource,authDest).then(console.log);
 
     } catch (err) {
         console.log(err);
