@@ -15,7 +15,7 @@ const importBlogs = async (sourceURL,destinationURL,authSource,authDest) => {
         const articleData = await getArticles(sourceURL,authSource,blogData);
 
         const importedArticlesCount = await checkArticles(destinationURL,authDest,articleData,blogIdsDest)
-        return 'Successfully imported '+ importedArticlesCount +  ' articles';
+        return typeof importedArticlesCount == 'number' ? 'Successfully imported '+ importedArticlesCount +  ' articles': 'Error occured: ' + importedArticlesCount;
     } catch (err) {
         console.log(err)
     }
@@ -24,9 +24,8 @@ const checkArticles = async (storeURL, auth, articleData, blogIdsDest) => {
 //When POSTING articles, make sure the blog_id is set to the correct id, or not it will respond with status 404
     articlesDest = [];
     for (i=0;i<articleData.length;i++) {
-        console.log('Importing articles from blog ' + [i+1] + ' of ' + articleData.length)
-        articlesDest.push(blogIdsDest[i])   
-            if(articleData[i] == ''){
+        console.log('Importing articles from blog ' + [i+1] + ' of ' + articleData.length)  
+            if(articleData[i].articles == ''){
                 console.log('No articles to import');
                 continue
             }else{
@@ -57,13 +56,9 @@ const checkArticles = async (storeURL, auth, articleData, blogIdsDest) => {
                     }
                     
                 }
-
             }
-            
     }
     return articlesDest != '' ? articlesDest.length: 'Something went wrong';
-    
-
 }
 const getArticles = async (storeURL, auth, blogData) => {
     console.log('===Fetching Articles===');
