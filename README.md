@@ -28,13 +28,13 @@ See [dotenv](https://www.npmjs.com/package/dotenv) and [how to get API keys and 
 ## main.js
 Using [Axios](https://github.com/axios/axios), this script first sends a GET request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json](https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json) (hardcoded into the URL parameter for now).
 
-After successful retreval all the resources, it sends a POST request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json](https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json). A successful POST request will respond with status code = 201.
+After successful retrieval all the resources, it sends a POST request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json](https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json). A successful POST request will respond with status code = 201.
 
 
-Example of a GET request resource:
+Example of a GET resquest response:
 ```javascript
 {
-  blog: {
+  blogs: [{
     id: 76612534453,
     handle: 'news-11',
     title: 'News',
@@ -44,9 +44,10 @@ Example of a GET request resource:
     template_suffix: null,
     admin_graphql_api_id: 'gid://shopify/OnlineStoreBlog/76612534453'
   }
+  ...
 }
 ```
-This is done in a forloop for the length of the resource array.
+This data is taken from the sourceURL and posted to the destURL in a forloop for the length of the resource array.
 
 Example result:
 ```
@@ -65,7 +66,7 @@ npm run delete
 ```
 Deletes all the resources on the destination store incase anything goes wrong and a reset is needed. 
 
-Edit which resources gets deleted by changing the args in [deleteResource.js](./utils/deleteScripts/deleteResource.js)
+Edit which resources gets deleted by changing the args in [deleteResource.js](./utils/deleteScript/deleteResource.js)
 ```javascript
 main(['pages','blogs']).then(console.log);
 ```
