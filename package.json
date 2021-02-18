@@ -5,7 +5,7 @@
   "main": "test.js",
   "scripts": {
     "start": "node main.js",
-    "delete": "node deletePages.js && node deleteBlogs.js"
+    "delete": "node deletePages.js && node deleteBlogs.js && node deleteProducts.js"
   },
   "author": "",
   "license": "ISC",
