@@ -19,12 +19,12 @@ async function main(){
     var authSource = encodeKeys(apiKey_source, apiSecret_source);
     var authDest = encodeKeys(apiKey_dest, apiSecret_dest);
 
-    //Tries to import the blogs, catches errors
+    //Tries to import the resources, catches errors
     try {
-        //const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
+        const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
         const pages = await importPages(sourceURL,destinationURL,authSource,authDest);
-        //const products = await importProducts(sourceURL,destinationURL,authSource,authDest);
-        return [pages];
+        const products = await importProducts(sourceURL,destinationURL,authSource,authDest);
+        return [blogs,pages,products];
     } catch (err) {
         console.log(err);
     }

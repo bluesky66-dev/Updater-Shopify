@@ -70,7 +70,7 @@ Edit which resources gets deleted by changing the args in [deleteResource.js](./
 main(['pages','blogs']).then(console.log);
 ```
 ## Future Improvements
-Future developments include intergrating importing the individual articles without changin the endpoint URLs. This script can be extended to import pages, products, collections in the same manner, using the [Shopify Admin API](https://shopify.dev/docs/admin-api).
+Future developments include embedding this script into a public Shopify app via [Shopify App Bridge](https://shopify.dev/tools/app-bridge), allowing a user to import resources through a familar UI like [Polaris](https://polaris.shopify.com/). 
 
 *Shops that use Gempages need to import the theme.zip manually before importing the pages as the POST request is reliant on Gempage templates.
 

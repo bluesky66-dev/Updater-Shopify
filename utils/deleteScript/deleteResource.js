@@ -72,4 +72,4 @@ const deleteResources = async (resource, resourceIds) => {
     }
     return '===Deleted ' + resource + '==='
 }
-main(['pages']).then(console.log);
+main(['pages','blogs']).then(console.log);
