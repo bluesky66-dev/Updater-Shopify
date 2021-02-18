@@ -1,5 +1,5 @@
 var axios = require('axios');
-const encodeKeys = require('./encodeKeys');
+const encodeKeys = require('../authScripts/encodeKeys');
 require('dotenv').config();
 var destinationURL = 'z21-store-cloner'
 var pageIds = [];

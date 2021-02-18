@@ -1,5 +1,7 @@
 var axios = require('axios');
 require('dotenv').config();
+// If the page uses GEMPAGES, the theme MUST be imported first before the page can be imported.
+// Otherwise, the page template won't exist at the time of import. 
 
 const importPages = async (sourceURL, destinationURL, authSource, authDest) => {
     console.log('====DUPLICATING PAGES====');
@@ -31,13 +33,8 @@ const checkPostPages = async (storeURL, auth, pageData) => {
                 const pageTitle = await postPages(storeURL, auth, pagesSource);
                 pageTitlesDest.push(pageTitle);
             } else {
-                if (pagesSource[i].handle != pagesDest[i].handle) {
-                    const pageTitle = await postPages(storeURL, auth, pagesSource);
-                    pageTitlesDest.push(pageTitle);
-                } else {
-                    console.log('Page already exists!');
-                    continue
-                }
+                //Could be extended to continue from the last imported page, saving time.
+                return 'Destination store must be empty!'
             }
         }
     }

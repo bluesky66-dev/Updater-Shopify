@@ -1,21 +1,18 @@
 require('dotenv').config();
-var encodeKeys = require('./encodeKeys');
-var importBlogs = require('./importBlogs');
-var importPages = require('./importPages');
-var importProducts = require('./importProducts');
+var encodeKeys = require('./utils/authScripts/encodeKeys');
+var importBlogs = require('./utils/importScripts/importBlogs');
+var importPages = require('./utils/importScripts/importPages');
+var importProducts = require('./utils/importScripts/importProducts');
 
 // Retreives API keys from .env file
 const {
     apiKey_source,
     apiSecret_source,
     apiKey_dest,
-    apiSecret_dest
+    apiSecret_dest,
+    destinationURL,
+    sourceURL
 } = process.env;
-
-//Enter Source and Destination Store URLs (EDIT ME)
-var sourceURL = "getha-th-test"
-var destinationURL = "z21-store-cloner"
-
 
 async function main(){
     // Encodes the API keys in base64 to be used as Auth headers
@@ -24,10 +21,10 @@ async function main(){
 
     //Tries to import the blogs, catches errors
     try {
-        const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
+        //const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
         const pages = await importPages(sourceURL,destinationURL,authSource,authDest);
-        const products = await importProducts(sourceURL,destinationURL,authSource,authDest);
-        return [blogs,pages,products];
+        //const products = await importProducts(sourceURL,destinationURL,authSource,authDest);
+        return [pages];
     } catch (err) {
         console.log(err);
     }
