@@ -1,8 +1,10 @@
-# Shopify Blog Import Script
-This script uses the [Shopify Admin API](https://shopify.dev/docs/admin-api) to achieve the following:
+# Shopify Storecloner Script
+This script uses the [Shopify Admin API](https://shopify.dev/docs/admin-api) to clone the following resources:
 
-1) Get blogs from a store
-2) Post the blogs from source to destination store
+1) Blogs
+2) Pages*
+3) Products**
+
 ## Installing
 ```
 $ npm install
@@ -11,28 +13,25 @@ $ npm install
 $ npm start
 ```
 ## Prerequisites 
-This script requires a .env file on the root folder to retreive the API Key and API Secret as shown below:
+This script requires a process.env file on the root folder to retreive the API Key and API Secret as shown below:
 ```
 apiKey_source = 'YOUR SOURCE API KEY'
 apiSecret_source = 'YOUR SOURCE API SECRET'
 apiKey_dest = 'YOUR DESTINATION API KEY'
 apiSecret_dest = 'YOUR DESTINATION API SECRET'
+sourceURL = 'YOUR SOURCE URL'
+destinationURL = 'YOUR DESTINATION URL'
 ```
 See [dotenv](https://www.npmjs.com/package/dotenv) and [how to get API keys and secrets](https://duplicate-shopify-app.herokuapp.com/credentials) for more info.
 
 
-```javascript
-//Enter Source and Destination Store URLs without .myshopify.com (EDIT ME)
-var sourceURL = "z21-store-cloner"
-var destinationURL = "getha-thailand"
-```
-## importBlogs.js
-Using [Axios](https://github.com/axios/axios), this script first sends a GET request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json](https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json) (hardcoded into the URL parameter for now), and console logs the result.
+## main.js
+Using [Axios](https://github.com/axios/axios), this script first sends a GET request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json](https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json) (hardcoded into the URL parameter for now).
 
-After retreving all the articles, importArticles.js can be used to send a POST request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json](https://{storeURL}.myshopify.com/admin/api/2021-01/blogs.json). A successful POST request will respond with status code = 201 and console.log the following:
->Imported Successfully!
+After successful retreval all the resources, it sends a POST request to the endpoint [https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json](https://{storeURL}.myshopify.com/admin/api/2021-01/{resource}.json). A successful POST request will respond with status code = 201.
 
-and respond with the blog sent in JSON. 
+
+Example of a GET request resource:
 ```javascript
 {
   blog: {
@@ -47,7 +46,33 @@ and respond with the blog sent in JSON.
   }
 }
 ```
-This is done in a forloop for the length of the blog array.
+This is done in a forloop for the length of the resource array.
 
+Example result:
+```
+====DUPLICATING PAGES====
+===Fetching Pages===
+===Fetching Pages===
+Page Data Fetched
+===Posting 1 of 36 Pages===
+===Posting 2 of 36 Pages===
+===Posting 3 of 36 Pages===
+```
+
+## Deleting resources
+```
+npm run delete
+```
+Deletes all the resources on the destination store incase anything goes wrong and a reset is needed. 
+
+Edit which resources gets deleted by changing the args in [deleteResource.js](./utils/deleteScripts/deleteResource.js)
+```javascript
+main(['pages','blogs']).then(console.log);
+```
 ## Future Improvements
 Future developments include intergrating importing the individual articles without changin the endpoint URLs. This script can be extended to import pages, products, collections in the same manner, using the [Shopify Admin API](https://shopify.dev/docs/admin-api).
+
+*Shops that use Gempages need to import the theme.zip manually before importing the pages as the POST request is reliant on Gempage templates.
+
+**There are some issues with variant images (undefined image_ids during posting) which results in an error: 422
+To resolve this, I eliminated the image_ids from product variants. 
