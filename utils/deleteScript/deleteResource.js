@@ -25,7 +25,7 @@ const getResources = async (resource) => {
     var resourceIds = [];
     var config = {
         method: 'get',
-        url: `https://${destinationURL}.myshopify.com/admin/api/2021-01/${resource}.json`,
+        url: `https://${destinationURL}.myshopify.com/admin/api/2021-01/${resource}.json?limit=250`,
         headers: {
             'Authorization': authDest,
             'Content-Type': 'application/json',
@@ -72,4 +72,4 @@ const deleteResources = async (resource, resourceIds) => {
     }
     return '===Deleted ' + resource + '==='
 }
-main(['pages','blogs']).then(console.log);
+main(['pages','blogs','products']).then(console.log);

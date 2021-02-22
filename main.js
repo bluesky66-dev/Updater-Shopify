@@ -21,8 +21,8 @@ async function main(){
 
     //Tries to import the resources, catches errors
     try {
-        const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
-        const pages = await importPages(sourceURL,destinationURL,authSource,authDest);
+        //const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
+        //const pages = await importPages(sourceURL,destinationURL,authSource,authDest);
         const products = await importProducts(sourceURL,destinationURL,authSource,authDest);
         return [blogs,pages,products];
     } catch (err) {

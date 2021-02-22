@@ -32,8 +32,8 @@ const checkProductData = async (storeURL, auth, productData) => {
         return 'No products to import';
     } else {
         for (i = 0; i < productsSource.length; i++) {
+            console.log('===Posting ' + [i + 1] + ' of ' + productsSource.length + ' products===');
             if (productsDest == '') {
-                console.log('===Posting ' + [i + 1] + ' of ' + productsSource.length + ' products===');
                 const productTitle = await postProducts(storeURL, auth, productsSource);
                 productTitlesDest.push(productTitle);
             } else {
