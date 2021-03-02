@@ -37,7 +37,7 @@ const checkProductData = async (storeURL, auth, productData) => {
                 const productTitle = await postProducts(storeURL, auth, productsSource);
                 productTitlesDest.push(productTitle);
             } else {
-                if (productsSource[i].handle != productsDest[i].handle) {
+                if (productsSource?.[i].handle != productsDest?.[i].handle) {
                     const productTitle = await postProducts(storeURL, auth, productsSource);
                     productTitlesDest.push(productTitle);
                 } else {
