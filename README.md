@@ -1,6 +1,6 @@
 # Shopify Storecloner Script
 ## DISCLAIMER
-I have found (rather embarassingly 🤦) that there exists [shopify-api-node](https://www.npmjs.com/package/shopify-api-node) which basically eliminates the need for Axios, but rather creeates an instance to do exactly what's done here in cleaner code. I will be spending sometime reading the docs and porting over my code to implement this package instead. 
+I have found (rather embarassingly 🤦) that there exists [shopify-api-node](https://www.npmjs.com/package/shopify-api-node) which basically eliminates the need for Axios, but rather creates an instance to do exactly what's done here in cleaner code. I will be spending sometime reading the docs and porting over my code to implement this package instead. 
 
 This script uses the [Shopify Admin API](https://shopify.dev/docs/admin-api) to clone the following resources:
 
