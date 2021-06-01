@@ -12,6 +12,9 @@
   "dependencies": {
     "@shopify/themekit": "^1.1.7",
     "axios": "^0.21.1",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "fs": "^0.0.1-security",
+    "shopify-api-node": "^3.6.12",
+    "xlsx": "^0.17.0"
   }
 }

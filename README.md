@@ -44,8 +44,7 @@ Example of a GET resquest response:
     created_at: '2021-02-15T04:45:09-05:00',
     template_suffix: null,
     admin_graphql_api_id: 'gid://shopify/OnlineStoreBlog/76612534453'
-  }
-  ...
+  }]
 }
 ```
 This data is taken from the sourceURL and posted to the destURL in a forloop for the length of the resource array.
