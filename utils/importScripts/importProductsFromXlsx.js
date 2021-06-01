@@ -43,11 +43,13 @@ function sleep(ms) {
 }
 const postProducts = async (storeURL, auth, productsSource, i) => {
     let data = {};
-
+    console.log(`=== Products Images === ${productsSource[i].images.length}`);
+    // return data ? data : 'An error occured';
     const shopify = new Shopify({
         shopName: destinationURL,
         apiKey: apiKey_dest,
-        password: apiSecret_dest
+        password: apiSecret_dest,
+        timeout: 60000 * 60,
     });
     // return data ? data : 'An error occured';
     try {
@@ -68,14 +70,14 @@ const postProducts = async (storeURL, auth, productsSource, i) => {
 }
 const getProducts = async (storeURL, auth) => {
     console.log('===Reading Products===');
-    var workbook = XLSX.readFile('Products/WATCHES_COLLECTION.xlsx');
+    var workbook = XLSX.readFile('Products/FOOTWEAR_COLLECTION.xlsx');
     var first_sheet_name = workbook.SheetNames[0];
     var worksheet = workbook.Sheets[first_sheet_name];
     const products = [];
     let preTitle = '';
     let preCat = '';
     let product = {};
-    for (let i = 2; i <= 76; i++) {
+    for (let i = 2; i <= 589; i++) {
         console.log(`===Reading Products === ${i}`);
         const category = worksheet[`A${i}`]?.v.trim();
         const title = worksheet[`L${i}`]?.v;
@@ -86,8 +88,11 @@ const getProducts = async (storeURL, auth) => {
         if (preTitle === title && preCat === category) {
             product = getProductsVariants(worksheet, product, i);
 
-            const productImages = await getProductsImages(worksheet, i);
-            product.images = product.images.concat(productImages);
+            if (product.images.length < 30) {
+                const productImages = await getProductsImages(worksheet, i);
+                product.images = product.images.concat(productImages);
+            }
+
         } else {
             if (Object.keys(product).length > 0) {
                 if (product.images.length === 0) delete product.images;
@@ -122,8 +127,9 @@ const getProducts = async (storeURL, auth) => {
             product.title = title;
             product.status = 'active';
             product.body_html = htmlBody;
-            product.product_type = category;
-            product.tags = [category];
+            const categories = category.split('-');
+            product.product_type = categories[0].trim();
+            product.tags = [categories[0].trim(), categories[1].trim()];
 
             product = getProductsVariants(worksheet, product, i);
 
@@ -132,7 +138,7 @@ const getProducts = async (storeURL, auth) => {
                     "key": "delivery_time",
                     "value": deliveryTime,
                     "value_type": "string",
-                    "namespace": getMetaNamespace(category)
+                    "namespace": getMetaNamespace(product.product_type)
                 })
             }
 
@@ -160,6 +166,7 @@ const getProducts = async (storeURL, auth) => {
 
 const getProductsVariants = (worksheet, product, i) => {
     const option1 = worksheet[`C${i}`]?.v;
+    const option2 = worksheet[`B${i}`]?.v;
     const sku = worksheet[`D${i}`]?.v;
     const barcode = worksheet[`K${i}`]?.v;
 
@@ -174,9 +181,13 @@ const getProductsVariants = (worksheet, product, i) => {
     if (product.options[0].values.indexOf(option1) < 0) {
         if (option1) product.options[0].values.push(option1);
     }
+    if (product.options[1].values.indexOf(option2) < 0) {
+        if (option2) product.options[1].values.push(option2);
+    }
 
     product.variants.push({
         option1: option1,
+        option2: option2,
         price: price,
         sku: sku,
         barcode: barcode,
@@ -196,7 +207,7 @@ const getProductsImages = async (worksheet, i) => {
     const imageServer = 'https://blueskydev.000webhostapp.com/';
     const images = [];
     const productImages = [];
-    const media1 = worksheet[`D${i}`]?.v;
+    // const media1 = worksheet[`D${i}`]?.v;
     const media2 = worksheet[`E${i}`]?.v;
     const media3 = worksheet[`F${i}`]?.v;
     const media4 = worksheet[`G${i}`]?.v;
@@ -204,7 +215,7 @@ const getProductsImages = async (worksheet, i) => {
     const media6 = worksheet[`I${i}`]?.v;
     const media7 = worksheet[`J${i}`]?.v;
 
-    if (media1) images.push(media1);
+    // if (media1) images.push(media1);
     if (media2) images.push(media2);
     if (media3) images.push(media3);
     if (media4) images.push(media4);
@@ -214,8 +225,8 @@ const getProductsImages = async (worksheet, i) => {
 
     for (let m = 0; m < images.length; m++){
         try {
-            const imagePath1 = `watches/${images[m]}.jpg`;
-            const imagePath2 = `watches/${images[m]}.png`;
+            const imagePath1 = `FOOTWEAR CASUAL IMAGES/${images[m]}.jpg`;
+            const imagePath2 = `FOOTWEAR CASUAL IMAGES/${images[m]}.png`;
 
             if (fs.existsSync(`Products/${imagePath1}`)) {
                 // const attachment = fs.readFileSync(imagePath1, {encoding: 'base64'});
