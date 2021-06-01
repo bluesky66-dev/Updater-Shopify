@@ -111,18 +111,6 @@ const getProducts = async (storeURL, auth) => {
                 {
                     "name": "Size",
                     "values": []
-                },
-                {
-                    "name": "PRIORITY ON WEBSITE",
-                    "values": []
-                },
-                {
-                    "name": "SHIPPING TIME",
-                    "values": []
-                },
-                {
-                    "name": "DELIVERY TIME",
-                    "values": []
                 }
             ];
             product.variants = [];
@@ -137,6 +125,25 @@ const getProducts = async (storeURL, auth) => {
             product.vendor = worksheet[`C${i}`].v;
             product.product_type = worksheet[`B${i}`].v;
             product = getProductsVariants(worksheet, product, i);
+
+            const shippingTime = worksheet[`R${i}`] ? worksheet[`R${i}`].v : '';
+            const deliveryTime = worksheet[`S${i}`] ? worksheet[`S${i}`].v : '';
+            if (shippingTime) {
+                product.metafields.push({
+                    "key": "shipping_time",
+                    "value": shippingTime,
+                    "value_type": "string",
+                    "namespace": getMetaNamespace(product.product_type)
+                })
+            }
+            if (deliveryTime) {
+                product.metafields.push({
+                    "key": "delivery_time",
+                    "value": deliveryTime,
+                    "value_type": "string",
+                    "namespace": getMetaNamespace(product.product_type)
+                })
+            }
 
             const productImages = await getProductsImages(worksheet, i);
             product.images = product.images.concat(productImages);
