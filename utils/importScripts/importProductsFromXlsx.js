@@ -17,7 +17,7 @@ const importProducts = async (sourceURL, destinationURL, authSource, authDest) =
     console.log('====READING PRODUCTS FROM xlsx file====');
     try {
         const productData = await getProducts(destinationURL, authDest);
-        productData ? console.log('Product Data Fetched') : console.log('Error occured, no products!');
+        productData ? console.log('Product Data Fetched ' + productData.length) : console.log('Error occured, no products!');
         // const productTitle = 12;
         const productTitle = await checkProductData(destinationURL, authDest, productData);
         return typeof productTitle == 'number' ? 'Successfully imported ' + productTitle + ' products' : 'Error occured: ' + productTitle;
@@ -29,7 +29,7 @@ const importProducts = async (sourceURL, destinationURL, authSource, authDest) =
 const checkProductData = async (storeURL, auth, productData) => {
     const productTitlesDest = [];
     for (let i = 0; i < productData.length; i++) {
-        console.log(Object.keys(productData[i]).length)
+        console.log(`=== Adding product === ${i}`)
         if (!productData[i] || Object.keys(productData[i]).length === 0) continue;
         const productTitle = await postProducts(storeURL, auth, productData, i);
         productTitlesDest.push(productTitle);
@@ -68,24 +68,22 @@ const postProducts = async (storeURL, auth, productsSource, i) => {
 }
 const getProducts = async (storeURL, auth) => {
     console.log('===Reading Products===');
-    var workbook = XLSX.readFile('Products/MAIN_PRODUCTS.xlsx');
+    var workbook = XLSX.readFile('Products/HATS_COLLECTION.xlsx');
     var first_sheet_name = workbook.SheetNames[0];
     var worksheet = workbook.Sheets[first_sheet_name];
-    // fs.writeFile('files/test.json', JSON.stringify(worksheet), err => {
-    //     if (err) {
-    //         console.error(err)
-    //         return
-    //     }
-    //     //file written successfully
-    // })
     const products = [];
     let preTitle = '';
     let preCat = '';
     let product = {};
-    for (let i = 2; i <= 65; i++) {
+    for (let i = 2; i <= 151; i++) {
         console.log(`===Reading Products === ${i}`);
-        if (!worksheet[`D${i}`] && !worksheet[`B${i}`]) continue;
-        if (preTitle === worksheet[`D${i}`].v && preCat === worksheet[`B${i}`].v) {
+        const category = worksheet[`A${i}`]?.v;
+        const title = worksheet[`F${i}`]?.v;
+        const htmlBody = worksheet[`G${i}`]?.v;
+        const deliveryTime = worksheet[`K${i}`]?.v;
+        if (!title && !category) continue;
+
+        if (preTitle === title && preCat === category) {
             product = getProductsVariants(worksheet, product, i);
 
             const productImages = await getProductsImages(worksheet, i);
@@ -99,7 +97,9 @@ const getProducts = async (storeURL, auth) => {
                 })
 
             }
-            products.push(product);
+            if (Object.keys(product).length > 0) {
+                products.push(product);
+            }
 
             product = {};
             product.images = [];
@@ -111,32 +111,30 @@ const getProducts = async (storeURL, auth) => {
                 {
                     "name": "Size",
                     "values": []
-                },
-                {
-                    "name": "PRIORITY ON WEBSITE",
-                    "values": []
-                },
-                {
-                    "name": "SHIPPING TIME",
-                    "values": []
-                },
-                {
-                    "name": "DELIVERY TIME",
-                    "values": []
                 }
             ];
             product.variants = [];
             product.metafields = [];
 
-            preTitle = worksheet[`D${i}`].v;
-            preCat = worksheet[`B${i}`].v;
+            preTitle = title;
+            preCat = category;
 
-            product.title = worksheet[`D${i}`].v;
+            product.title = title;
             product.status = 'active';
-            product.body_html = worksheet[`O${i}`].v;
-            product.vendor = worksheet[`C${i}`].v;
-            product.product_type = worksheet[`B${i}`].v;
+            product.body_html = htmlBody;
+            product.product_type = category;
+            product.tags = [category];
+
             product = getProductsVariants(worksheet, product, i);
+
+            if (deliveryTime) {
+                product.metafields.push({
+                    "key": "delivery_time",
+                    "value": deliveryTime,
+                    "value_type": "string",
+                    "namespace": getMetaNamespace(category)
+                })
+            }
 
             const productImages = await getProductsImages(worksheet, i);
             product.images = product.images.concat(productImages);
@@ -148,7 +146,6 @@ const getProducts = async (storeURL, auth) => {
         product.options = product.options.filter((option, i) => {
             return option.values.length > 0;
         })
-
     }
     products.push(product);
     fs.writeFile('files/putting-product.json', JSON.stringify(products), err => {
@@ -162,27 +159,31 @@ const getProducts = async (storeURL, auth) => {
 }
 
 const getProductsVariants = (worksheet, product, i) => {
-    const option1 = worksheet[`E${i}`] ? worksheet[`E${i}`].v : '';
-    const option2 = worksheet[`F${i}`] ? worksheet[`F${i}`].v : '';
-    const price = worksheet[`Q${i}`] ? worksheet[`Q${i}`].v : '';
-    const sku = worksheet[`G${i}`] ? worksheet[`G${i}`].v : '';
-    const barcode = worksheet[`H${i}`] ? worksheet[`H${i}`].v : '';
-    const compareAtPrice = worksheet[`P${i}`] ? worksheet[`P${i}`].v : '';
+    const option1 = worksheet[`C${i}`]?.v;
+    const sku = worksheet[`D${i}`]?.v;
+    const barcode = worksheet[`E${i}`]?.v;
+
+    const costPerItem = worksheet[`H${i}`]?.v;
+    const price = worksheet[`I${i}`]?.v;
+    const compareAtPrice = worksheet[`J${i}`]?.v;
+    const inventoryQuantity = worksheet[`L${i}`]?.v;
+
+    const weight = worksheet[`M${i}`]?.v;
+    const hsCode = worksheet[`N${i}`]?.v;
 
     if (product.options[0].values.indexOf(option1) < 0) {
         if (option1) product.options[0].values.push(option1);
     }
-    if (product.options[1].values.indexOf(option2) < 0) {
-        if (option2) product.options[1].values.push(option2);
-    }
 
     product.variants.push({
         option1: option1,
-        option2: option2,
         price: price,
         sku: sku,
         barcode: barcode,
         compare_at_price: compareAtPrice,
+        cost: costPerItem,
+        weight: weight,
+        inventory_quantity: inventoryQuantity,
     })
     return product;
 }
@@ -195,35 +196,25 @@ const getProductsImages = async (worksheet, i) => {
     const imageServer = 'https://blueskydev.000webhostapp.com/';
     const images = [];
     const productImages = [];
-    const product_type = worksheet[`B${i}`].v;
-    if (worksheet[`I${i}`]) images.push(worksheet[`I${i}`].v);
-    if (worksheet[`J${i}`]) images.push(worksheet[`J${i}`].v);
-    if (worksheet[`K${i}`]) images.push(worksheet[`K${i}`].v);
-    if (worksheet[`L${i}`]) images.push(worksheet[`L${i}`].v);
-    if (worksheet[`M${i}`]) images.push(worksheet[`M${i}`].v);
-    if (worksheet[`N${i}`]) images.push(worksheet[`N${i}`].v);
+    const media = worksheet[`D${i}`]?.v;
 
-    for (let k = 0; k < images.length; k++) {
-        if (images[k]) {
-            try {
-                const imagePath1 = `MAIN_PRODUCTS_IMAGES/${product_type}/${images[k]}.jpg`;
-                const imagePath2 = `MAIN_PRODUCTS_IMAGES/${product_type}/${images[k]}.png`;
-                if (fs.existsSync(`Products/${imagePath1}`)) {
-                    // const attachment = fs.readFileSync(imagePath1, {encoding: 'base64'});
-                    productImages.push({
-                        src: imageServer + imagePath1
-                    });
-                }
-                if (fs.existsSync(`Products/${imagePath2}`)) {
-                    // const attachment = fs.readFileSync(imagePath2, {encoding: 'base64'});
-                    productImages.push({
-                        src: imageServer + imagePath1
-                    });
-                }
-            } catch (e) {
+    try {
+        const imagePath1 = `HATS IMAGES/${media}.jpg`;
+        const imagePath2 = `HATS IMAGES/${media}.png`;
 
-            }
+        if (fs.existsSync(`Products/${imagePath1}`)) {
+            // const attachment = fs.readFileSync(imagePath1, {encoding: 'base64'});
+            productImages.push({
+                src: imageServer + imagePath1
+            });
         }
+        if (fs.existsSync(`Products/${imagePath2}`)) {
+            // const attachment = fs.readFileSync(imagePath2, {encoding: 'base64'});
+            productImages.push({
+                src: imageServer + imagePath1
+            });
+        }
+    } catch (e) {
     }
 
     return productImages;
