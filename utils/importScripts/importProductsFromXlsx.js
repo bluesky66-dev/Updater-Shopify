@@ -124,6 +124,7 @@ const getProducts = async (storeURL, auth) => {
             product.body_html = worksheet[`O${i}`].v;
             product.vendor = worksheet[`C${i}`].v;
             product.product_type = worksheet[`B${i}`].v;
+            product.tags = [worksheet[`B${i}`].v];
             product = getProductsVariants(worksheet, product, i);
 
             const shippingTime = worksheet[`R${i}`] ? worksheet[`R${i}`].v : '';
