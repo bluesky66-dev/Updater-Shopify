@@ -68,19 +68,19 @@ const postProducts = async (storeURL, auth, productsSource, i) => {
 }
 const getProducts = async (storeURL, auth) => {
     console.log('===Reading Products===');
-    var workbook = XLSX.readFile('Products/HATS_COLLECTION.xlsx');
+    var workbook = XLSX.readFile('Products/WATCHES_COLLECTION.xlsx');
     var first_sheet_name = workbook.SheetNames[0];
     var worksheet = workbook.Sheets[first_sheet_name];
     const products = [];
     let preTitle = '';
     let preCat = '';
     let product = {};
-    for (let i = 2; i <= 151; i++) {
+    for (let i = 2; i <= 76; i++) {
         console.log(`===Reading Products === ${i}`);
-        const category = worksheet[`A${i}`]?.v;
-        const title = worksheet[`F${i}`]?.v;
-        const htmlBody = worksheet[`G${i}`]?.v;
-        const deliveryTime = worksheet[`K${i}`]?.v;
+        const category = worksheet[`A${i}`]?.v.trim();
+        const title = worksheet[`L${i}`]?.v;
+        const htmlBody = worksheet[`M${i}`]?.v;
+        const deliveryTime = worksheet[`Q${i}`]?.v;
         if (!title && !category) continue;
 
         if (preTitle === title && preCat === category) {
@@ -161,15 +161,15 @@ const getProducts = async (storeURL, auth) => {
 const getProductsVariants = (worksheet, product, i) => {
     const option1 = worksheet[`C${i}`]?.v;
     const sku = worksheet[`D${i}`]?.v;
-    const barcode = worksheet[`E${i}`]?.v;
+    const barcode = worksheet[`K${i}`]?.v;
 
-    const costPerItem = worksheet[`H${i}`]?.v;
-    const price = worksheet[`I${i}`]?.v;
-    const compareAtPrice = worksheet[`J${i}`]?.v;
-    const inventoryQuantity = worksheet[`L${i}`]?.v;
+    const costPerItem = worksheet[`N${i}`]?.v;
+    const price = worksheet[`O${i}`]?.v;
+    const compareAtPrice = worksheet[`P${i}`]?.v;
+    const inventoryQuantity = worksheet[`R${i}`]?.v;
 
-    const weight = worksheet[`M${i}`]?.v;
-    const hsCode = worksheet[`N${i}`]?.v;
+    const weight = worksheet[`S${i}`]?.v;
+    const hsCode = worksheet[`T${i}`]?.v;
 
     if (product.options[0].values.indexOf(option1) < 0) {
         if (option1) product.options[0].values.push(option1);
@@ -196,25 +196,41 @@ const getProductsImages = async (worksheet, i) => {
     const imageServer = 'https://blueskydev.000webhostapp.com/';
     const images = [];
     const productImages = [];
-    const media = worksheet[`D${i}`]?.v;
+    const media1 = worksheet[`D${i}`]?.v;
+    const media2 = worksheet[`E${i}`]?.v;
+    const media3 = worksheet[`F${i}`]?.v;
+    const media4 = worksheet[`G${i}`]?.v;
+    const media5 = worksheet[`H${i}`]?.v;
+    const media6 = worksheet[`I${i}`]?.v;
+    const media7 = worksheet[`J${i}`]?.v;
 
-    try {
-        const imagePath1 = `HATS IMAGES/${media}.jpg`;
-        const imagePath2 = `HATS IMAGES/${media}.png`;
+    if (media1) images.push(media1);
+    if (media2) images.push(media2);
+    if (media3) images.push(media3);
+    if (media4) images.push(media4);
+    if (media5) images.push(media5);
+    if (media6) images.push(media6);
+    if (media7) images.push(media7);
 
-        if (fs.existsSync(`Products/${imagePath1}`)) {
-            // const attachment = fs.readFileSync(imagePath1, {encoding: 'base64'});
-            productImages.push({
-                src: imageServer + imagePath1
-            });
+    for (let m = 0; m < images.length; m++){
+        try {
+            const imagePath1 = `watches/${images[m]}.jpg`;
+            const imagePath2 = `watches/${images[m]}.png`;
+
+            if (fs.existsSync(`Products/${imagePath1}`)) {
+                // const attachment = fs.readFileSync(imagePath1, {encoding: 'base64'});
+                productImages.push({
+                    src: imageServer + imagePath1
+                });
+            }
+            if (fs.existsSync(`Products/${imagePath2}`)) {
+                // const attachment = fs.readFileSync(imagePath2, {encoding: 'base64'});
+                productImages.push({
+                    src: imageServer + imagePath1
+                });
+            }
+        } catch (e) {
         }
-        if (fs.existsSync(`Products/${imagePath2}`)) {
-            // const attachment = fs.readFileSync(imagePath2, {encoding: 'base64'});
-            productImages.push({
-                src: imageServer + imagePath1
-            });
-        }
-    } catch (e) {
     }
 
     return productImages;
