@@ -70,14 +70,14 @@ const postProducts = async (storeURL, auth, productsSource, i) => {
 }
 const getProducts = async (storeURL, auth) => {
     console.log('===Reading Products===');
-    var workbook = XLSX.readFile('Products/FOOTWEAR_COLLECTION.xlsx');
+    var workbook = XLSX.readFile('Products/MENS_SHORTS_COLLECTION.xlsx');
     var first_sheet_name = workbook.SheetNames[0];
     var worksheet = workbook.Sheets[first_sheet_name];
     const products = [];
     let preTitle = '';
     let preCat = '';
     let product = {};
-    for (let i = 2; i <= 589; i++) {
+    for (let i = 2; i <= 286; i++) {
         console.log(`===Reading Products === ${i}`);
         const category = worksheet[`A${i}`]?.v.trim();
         const title = worksheet[`L${i}`]?.v;
@@ -225,8 +225,8 @@ const getProductsImages = async (worksheet, i) => {
 
     for (let m = 0; m < images.length; m++){
         try {
-            const imagePath1 = `FOOTWEAR CASUAL IMAGES/${images[m]}.jpg`;
-            const imagePath2 = `FOOTWEAR CASUAL IMAGES/${images[m]}.png`;
+            const imagePath1 = `MENS SHORTS COLLECTION/${images[m]}.jpg`;
+            const imagePath2 = `MENS SHORTS COLLECTION/${images[m]}.png`;
 
             if (fs.existsSync(`Products/${imagePath1}`)) {
                 // const attachment = fs.readFileSync(imagePath1, {encoding: 'base64'});
