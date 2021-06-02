@@ -88,10 +88,10 @@ const getProducts = async (storeURL, auth) => {
         if (preTitle === title && preCat === category) {
             product = getProductsVariants(worksheet, product, i);
 
-            if (product.images.length < 30) {
-                const productImages = await getProductsImages(worksheet, i);
-                product.images = product.images.concat(productImages);
-            }
+            // if (product.images.length < 6) {
+            //     const productImages = await getProductsImages(worksheet, i);
+            //     product.images = product.images.concat(productImages);
+            // }
 
         } else {
             if (Object.keys(product).length > 0) {
