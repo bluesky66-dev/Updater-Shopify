@@ -70,14 +70,15 @@ const postProducts = async (storeURL, auth, productsSource, i) => {
 }
 const getProducts = async (storeURL, auth) => {
     console.log('===Reading Products===');
-    var workbook = XLSX.readFile('Products/MENS_SHORTS_COLLECTION.xlsx');
+    var workbook = XLSX.readFile('Products/MIXED_ACCESSORIES.xlsx');
     var first_sheet_name = workbook.SheetNames[0];
     var worksheet = workbook.Sheets[first_sheet_name];
     const products = [];
     let preTitle = '';
     let preCat = '';
+    let preHtmlBody = '';
     let product = {};
-    for (let i = 2; i <= 286; i++) {
+    for (let i = 2; i <= 137; i++) {
         console.log(`===Reading Products === ${i}`);
         const category = worksheet[`A${i}`]?.v.trim();
         const title = worksheet[`L${i}`]?.v;
@@ -85,14 +86,10 @@ const getProducts = async (storeURL, auth) => {
         const deliveryTime = worksheet[`Q${i}`]?.v;
         if (!title && !category) continue;
 
-        if (preTitle === title && preCat === category) {
+        if (preTitle === title && preCat === category && preHtmlBody === htmlBody) {
             product = getProductsVariants(worksheet, product, i);
-
-            // if (product.images.length < 6) {
-            //     const productImages = await getProductsImages(worksheet, i);
-            //     product.images = product.images.concat(productImages);
-            // }
-
+            const productImages = await getProductsImages(worksheet, i);
+            product.images = product.images.concat(productImages);
         } else {
             if (Object.keys(product).length > 0) {
                 if (product.images.length === 0) delete product.images;
@@ -103,6 +100,7 @@ const getProducts = async (storeURL, auth) => {
 
             }
             if (Object.keys(product).length > 0) {
+                product.images = removeAllDuplicates(product.images);
                 products.push(product);
             }
 
@@ -123,6 +121,7 @@ const getProducts = async (storeURL, auth) => {
 
             preTitle = title;
             preCat = category;
+            preHtmlBody = htmlBody;
 
             product.title = title;
             product.status = 'active';
@@ -153,6 +152,7 @@ const getProducts = async (storeURL, auth) => {
             return option.values.length > 0;
         })
     }
+    product.images = removeAllDuplicates(product.images);
     products.push(product);
     fs.writeFile('files/putting-product.json', JSON.stringify(products), err => {
         if (err) {
@@ -168,7 +168,7 @@ const getProductsVariants = (worksheet, product, i) => {
     const option1 = worksheet[`C${i}`]?.v;
     const option2 = worksheet[`B${i}`]?.v;
     const sku = worksheet[`D${i}`]?.v;
-    const barcode = worksheet[`K${i}`]?.v;
+    // const barcode = worksheet[`K${i}`]?.v;
 
     const costPerItem = worksheet[`N${i}`]?.v;
     const price = worksheet[`O${i}`]?.v;
@@ -190,7 +190,7 @@ const getProductsVariants = (worksheet, product, i) => {
         option2: option2,
         price: price,
         sku: sku,
-        barcode: barcode,
+        // barcode: barcode,
         compare_at_price: compareAtPrice,
         cost: costPerItem,
         weight: weight,
@@ -225,8 +225,8 @@ const getProductsImages = async (worksheet, i) => {
 
     for (let m = 0; m < images.length; m++){
         try {
-            const imagePath1 = `MENS SHORTS COLLECTION/${images[m]}.jpg`;
-            const imagePath2 = `MENS SHORTS COLLECTION/${images[m]}.png`;
+            const imagePath1 = `Mens Belts/${images[m]}.jpg`;
+            const imagePath2 = `Mens Belts/${images[m]}.png`;
 
             if (fs.existsSync(`Products/${imagePath1}`)) {
                 // const attachment = fs.readFileSync(imagePath1, {encoding: 'base64'});
@@ -249,5 +249,18 @@ const getProductsImages = async (worksheet, i) => {
 
 const addslashes = (str) => {
     return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+}
+
+const removeAllDuplicates = (arr) => {
+    const obj = {};
+    const newArr = [];
+
+    for (let i = 0; i < arr.length; i++){
+        obj[arr[i].src] = arr[i];
+    }
+    for ( let key in obj )
+        newArr.push(obj[key]);
+
+    return newArr;
 }
 module.exports = importProducts;
