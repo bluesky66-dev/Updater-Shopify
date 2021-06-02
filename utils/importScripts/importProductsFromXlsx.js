@@ -71,14 +71,14 @@ const postProducts = async (storeURL, auth, productsSource, i) => {
 const getProducts = async (storeURL, auth) => {
     console.log('===Reading Products===');
     var workbook = XLSX.readFile('Products/MIXED_ACCESSORIES.xlsx');
-    var first_sheet_name = workbook.SheetNames[1];
+    var first_sheet_name = workbook.SheetNames[2];
     var worksheet = workbook.Sheets[first_sheet_name];
     const products = [];
     let preTitle = '';
     let preCat = '';
     let preHtmlBody = '';
     let product = {};
-    for (let i = 2; i <= 65; i++) {
+    for (let i = 2; i <= 133; i++) {
         console.log(`===Reading Products === ${i}`);
         const category = worksheet[`A${i}`]?.v.trim();
         const title = worksheet[`L${i}`]?.v;
@@ -225,8 +225,8 @@ const getProductsImages = async (worksheet, i) => {
 
     for (let m = 0; m < images.length; m++){
         try {
-            const imagePath1 = `MENS GLOVES/${images[m]}.jpg`;
-            const imagePath2 = `MENS GLOVES/${images[m]}.png`;
+            const imagePath1 = `MENS UNDERWEAR/${images[m]}.jpg`;
+            const imagePath2 = `MENS UNDERWEAR/${images[m]}.png`;
 
             if (fs.existsSync(`Products/${imagePath1}`)) {
                 // const attachment = fs.readFileSync(imagePath1, {encoding: 'base64'});
@@ -252,6 +252,8 @@ const addslashes = (str) => {
 }
 
 const removeAllDuplicates = (arr) => {
+    if (!arr) return [];
+
     const obj = {};
     const newArr = [];
 
