@@ -76,6 +76,7 @@ const getProducts = async (storeURL, auth) => {
     const products = [];
     let preTitle = '';
     let preCat = '';
+    let preHtmlBody = '';
     let product = {};
     for (let i = 2; i <= 589; i++) {
         console.log(`===Reading Products === ${i}`);
@@ -85,14 +86,10 @@ const getProducts = async (storeURL, auth) => {
         const deliveryTime = worksheet[`Q${i}`]?.v;
         if (!title && !category) continue;
 
-        if (preTitle === title && preCat === category) {
+        if (preTitle === title && preCat === category && preHtmlBody === htmlBody) {
             product = getProductsVariants(worksheet, product, i);
-
-            // if (product.images.length < 6) {
-            //     const productImages = await getProductsImages(worksheet, i);
-            //     product.images = product.images.concat(productImages);
-            // }
-
+            const productImages = await getProductsImages(worksheet, i);
+            product.images = product.images.concat(productImages);
         } else {
             if (Object.keys(product).length > 0) {
                 if (product.images.length === 0) delete product.images;
@@ -103,6 +100,7 @@ const getProducts = async (storeURL, auth) => {
 
             }
             if (Object.keys(product).length > 0) {
+                product.images = removeAllDuplicates(product.images);
                 products.push(product);
             }
 
@@ -123,6 +121,7 @@ const getProducts = async (storeURL, auth) => {
 
             preTitle = title;
             preCat = category;
+            preHtmlBody = htmlBody;
 
             product.title = title;
             product.status = 'active';
@@ -153,6 +152,7 @@ const getProducts = async (storeURL, auth) => {
             return option.values.length > 0;
         })
     }
+    product.images = removeAllDuplicates(product.images);
     products.push(product);
     fs.writeFile('files/putting-product.json', JSON.stringify(products), err => {
         if (err) {
@@ -249,5 +249,20 @@ const getProductsImages = async (worksheet, i) => {
 
 const addslashes = (str) => {
     return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+}
+
+const removeAllDuplicates = (arr) => {
+    if (!arr) return [];
+
+    const obj = {};
+    const newArr = [];
+
+    for (let i = 0; i < arr.length; i++){
+        obj[arr[i].src] = arr[i];
+    }
+    for ( let key in obj )
+        newArr.push(obj[key]);
+
+    return newArr;
 }
 module.exports = importProducts;
