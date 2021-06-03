@@ -15,10 +15,10 @@ const OPTION1_INDEX = 'C';
 const MEDIA_INDEX = 'D';
 
 // Dev Store
-const COLLECTION_ID = 269331693733;
+// const COLLECTION_ID = 269331693733;
 
 // Live Store
-// const COLLECTION_ID = 268744523947;
+const COLLECTION_ID = 268744523947;
 
 const updateProducts = async (sourceURL, destinationURL, authSource, authDest) => {
     console.log('====READING PRODUCTS FROM xlsx file====');
