@@ -24,7 +24,7 @@ async function main(){
     try {
         // const blogs = await importBlogs(sourceURL,destinationURL,authSource,authDest);
         // const pages = await importPages(sourceURL,destinationURL,authSource,authDest);
-        const products = await importProducts(sourceURL,destinationURL,authSource,authDest);
+        const products = await updateProducts(sourceURL,destinationURL,authSource,authDest);
         return [products];
     } catch (err) {
         console.log(err);

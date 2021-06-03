@@ -2,27 +2,16 @@ var axios = require('axios');
 require('dotenv').config();
 var XLSX = require('xlsx');
 const fs = require('fs');
-const Shopify = require('shopify-api-node');
-
-const {
-    apiKey_source,
-    apiSecret_source,
-    apiKey_dest,
-    apiSecret_dest,
-    destinationURL,
-    sourceURL
-} = process.env;
 
 const EXCEL_FILE = 'FOOTWEAR_COLLECTION';
 const SHEET_INDEX = 0;
 const SHEET_LENGTH = 589;
-const IMAGE_FOLDER = 'FOOTWEAR CASUAL IMAGES';
 
 // Dev Store
-const COLLECTION_ID = 269322911909;
+// const COLLECTION_ID = 269322911909;
 
 // Live Store
-// const COLLECTION_ID = 268744753323;
+const COLLECTION_ID = 268744163499;
 
 const updateProducts = async (sourceURL, destinationURL, authSource, authDest) => {
     console.log('====READING PRODUCTS FROM xlsx file====');
@@ -76,7 +65,7 @@ const checkProductData = async (storeURL, auth, productData) => {
         for (let j = 0; j < variants.length; j++){
             const { id: variantId, option1, option2 } = variants[j];
             const dVariant = dProducts[0].variants.filter((item) => {
-                return option1 === item.option1 && option2 === `${item.option2}`
+                return option1 === item.option1.trim() && option2 === `${item.option2}`.trim()
             })
             if (dVariant.length < 1) continue;
 
@@ -104,8 +93,8 @@ const checkProductData = async (storeURL, auth, productData) => {
             continue;
         }
 
-        // const productTitle = await putProduct(storeURL, auth, product);
-        // productTitlesDest.push(productTitle);
+        const productTitle = await putProduct(storeURL, auth, product);
+        productTitlesDest.push(productTitle);
         // break;
     }
     return productTitlesDest !== '' ? productTitlesDest.length : 'Products already imported';
@@ -205,24 +194,10 @@ const getProductsVariants = (worksheet, product, i) => {
 
     const media = worksheet[`E${i}`]?.v;
 
-    let image = media;
-    try {
-        const imagePath1 = `${IMAGE_FOLDER}/${media}.jpg`;
-        const imagePath2 = `${IMAGE_FOLDER}/${media}.png`;
-
-        if (fs.existsSync(`Products/${imagePath1}`)) {
-            image = `${media}.jpg`;
-        }
-        if (fs.existsSync(`Products/${imagePath2}`)) {
-            // const attachment = fs.readFileSync(imagePath2, {encoding: 'base64'});
-            image = `${media}.png`;
-        }
-    } catch (e) {
-    }
     product.variants.push({
         option1: option1,
         option2: option2,
-        image: image,
+        image: media,
     })
     return product;
 }
