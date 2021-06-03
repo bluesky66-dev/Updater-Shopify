@@ -2,7 +2,7 @@ require('dotenv').config();
 var encodeKeys = require('./utils/authScripts/encodeKeys');
 var importBlogs = require('./utils/importScripts/importBlogs');
 var importPages = require('./utils/importScripts/importPages');
-var importProducts = require('./utils/importScripts/importProductsFromXlsx');
+var importProducts = require('./utils/importScripts/updateProducts');
 
 // Retreives API keys from .env file
 const {

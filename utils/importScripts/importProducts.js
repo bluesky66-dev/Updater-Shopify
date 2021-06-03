@@ -12,11 +12,19 @@ const importProducts = async (sourceURL, destinationURL, authSource, authDest) =
     console.log('====DUPLICATING PRODUCTS====');
     try {
         const productSource = await getProducts(sourceURL, authSource);
-        const productDest = await getProducts(destinationURL, authDest);
-        const productData = [productSource, productDest];
-        productData ? console.log('Product Data Fetched') : console.log('Error occured, no products!');
-        const productTitle = await checkProductData(destinationURL, authDest, productData);
-        // const productTitle =21;
+        // const productDest = await getProducts(destinationURL, authDest);
+        // const productData = [productSource, productDest];
+        fs.writeFile(`files/${sourceURL}.json`, JSON.stringify(productSource), err => {
+            if (err) {
+                console.error(err)
+                return
+            }
+            //file written successfully
+        })
+        //
+        // productData ? console.log('Product Data Fetched') : console.log('Error occured, no products!');
+        // const productTitle = await checkProductData(destinationURL, authDest, productData);
+        const productTitle =21;
         return typeof productTitle == 'number' ? 'Successfully imported ' + productTitle + ' products' : 'Error occured: ' + productTitle;
     } catch (err) {
         console.log(err);
