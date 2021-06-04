@@ -17,7 +17,7 @@ const importProducts = async (sourceURL, destinationURL, authSource, authDest) =
     console.log('====READING PRODUCTS FROM xlsx file====');
     try {
         const productData = await getProducts(destinationURL, authDest);
-        productData ? console.log('Product Data Fetched') : console.log('Error occured, no products!');
+        productData ? console.log('Product Data Fetched ' + productData.length) : console.log('Error occured, no products!');
         // const productTitle = 12;
         const productTitle = await checkProductData(destinationURL, authDest, productData);
         return typeof productTitle == 'number' ? 'Successfully imported ' + productTitle + ' products' : 'Error occured: ' + productTitle;
@@ -29,7 +29,7 @@ const importProducts = async (sourceURL, destinationURL, authSource, authDest) =
 const checkProductData = async (storeURL, auth, productData) => {
     const productTitlesDest = [];
     for (let i = 0; i < productData.length; i++) {
-        console.log(Object.keys(productData[i]).length)
+        console.log(`=== Adding product === ${i}`)
         if (!productData[i] || Object.keys(productData[i]).length === 0) continue;
         const productTitle = await postProducts(storeURL, auth, productData, i);
         productTitlesDest.push(productTitle);
@@ -43,11 +43,14 @@ function sleep(ms) {
 }
 const postProducts = async (storeURL, auth, productsSource, i) => {
     let data = {};
-
+    console.log(`*** Products Title *** ${productsSource[i].title}`);
+    console.log(`*** Products Images *** ${productsSource[i].images.length}`);
+    // return data ? data : 'An error occured';
     const shopify = new Shopify({
         shopName: destinationURL,
         apiKey: apiKey_dest,
-        password: apiSecret_dest
+        password: apiSecret_dest,
+        timeout: 60000 * 60,
     });
     // return data ? data : 'An error occured';
     try {
@@ -71,13 +74,6 @@ const getProducts = async (storeURL, auth) => {
     var workbook = XLSX.readFile('Products/MAIN_PRODUCTS.xlsx');
     var first_sheet_name = workbook.SheetNames[0];
     var worksheet = workbook.Sheets[first_sheet_name];
-    // fs.writeFile('files/test.json', JSON.stringify(worksheet), err => {
-    //     if (err) {
-    //         console.error(err)
-    //         return
-    //     }
-    //     //file written successfully
-    // })
     const products = [];
     let preTitle = '';
     let preCat = '';
@@ -99,7 +95,10 @@ const getProducts = async (storeURL, auth) => {
                 })
 
             }
-            products.push(product);
+            if (Object.keys(product).length > 0) {
+                product.images = removeAllDuplicates(product.images);
+                products.push(product);
+            }
 
             product = {};
             product.images = [];
@@ -156,8 +155,8 @@ const getProducts = async (storeURL, auth) => {
         product.options = product.options.filter((option, i) => {
             return option.values.length > 0;
         })
-
     }
+    product.images = removeAllDuplicates(product.images);
     products.push(product);
     fs.writeFile('files/putting-product.json', JSON.stringify(products), err => {
         if (err) {
@@ -239,5 +238,20 @@ const getProductsImages = async (worksheet, i) => {
 
 const addslashes = (str) => {
     return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+}
+
+const removeAllDuplicates = (arr) => {
+    if (!arr) return [];
+
+    const obj = {};
+    const newArr = [];
+
+    for (let i = 0; i < arr.length; i++){
+        obj[arr[i].src] = arr[i];
+    }
+    for ( let key in obj )
+        newArr.push(obj[key]);
+
+    return newArr;
 }
 module.exports = importProducts;
